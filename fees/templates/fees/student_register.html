@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UOK Fee Portal - Student Registration</title>
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h2>UOK Fee Portal</h2>
+                <p>Student Account Registration</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <div class="form-card">
+            <h2>Student Registration</h2>
+            <p>Create your student account to access fee services.</p>
+
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn">Register</button>
+            </form>
+
+            <p class="form-footer">
+                Already registered?
+                <a href="{% url 'student_login' %}">Login here</a>
+            </p>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History | UOK Fee Portal</title>
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">UOK</div>
+            <div>
+                <h1>UOK Fee Portal</h1>
+                <p>University of Kabianga</p>
+            </div>
+        </div>
+
+        <a href="{% url 'home' %}" class="login-btn">Home</a>
+    </div>
+</header>
+
+<section class="student-section">
+    <div class="student-container">
+
+        <div class="student-heading">
+            <div>
+                <h2>Payment History</h2>
+                <p>View all recorded student payments.</p>
+            </div>
+
+            <a href="{% url 'record_payment' %}" class="primary-btn">
+                Record New Payment
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Admission Number</th>
+                        <th>Student Name</th>
+                        <th>Academic Year</th>
+                        <th>Semester</th>
+                        <th>Amount Paid (KSh)</th>
+                        <th>Payment Method</th>
+                        <th>Transaction Reference</th>
+                        <th>Status</th>
+                        <th>Payment Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.fee.student.admission_number }}</td>
+                        <td>{{ payment.fee.student.first_name }} {{ payment.fee.student.last_name }}</td>
+                        <td>{{ payment.fee.academic_year }}</td>
+                        <td>{{ payment.fee.semester }}</td>
+                        <td>{{ payment.amount|floatformat:2 }}</td>
+                        <td>{{ payment.payment_method }}</td>
+                        <td>{{ payment.transaction_reference|default:"—" }}</td>
+                        <td>{{ payment.status }}</td>
+                        <td>{{ payment.payment_date|date:"d M Y" }}</td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="9">No payments have been recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

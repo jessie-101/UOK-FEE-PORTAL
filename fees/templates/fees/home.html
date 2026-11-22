@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>UOK Fee Portal | University of Kabianga</title>
+
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">UOK</div>
+                <div>
+                    <h1>UOK Fee Portal</h1>
+                    <p>University of Kabianga</p>
+                </div>
+            </div>
+
+            <a href="/admin/" class="login-btn">
+                Administrator Login
+            </a>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="{% url 'home' %}" class="active">Home</a>
+            <a href="#student-portal">Student Portal</a>
+            <a href="#admin-portal">Admin Portal</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <main>
+
+        <section class="welcome-section">
+            <div class="welcome-content">
+
+                <span class="welcome-label">
+                    UNIVERSITY STUDENT FINANCE MANAGEMENT
+                </span>
+
+                <h2>Welcome to UOK Fee Portal</h2>
+
+                <p>
+                    A centralized platform for managing student fee records,
+                    checking outstanding balances and making university fee
+                    payments conveniently.
+                </p>
+
+                <div class="welcome-buttons">
+                    <a href="{% url 'student_login' %}" class="primary-btn">
+                        Student Login
+                    </a>
+
+                    <a href="{% url 'student_register' %}" class="secondary-btn">
+                        Student Registration
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- STUDENT PORTAL -->
+
+        <section class="services-section" id="student-portal">
+
+            <div class="section-heading">
+                <h2>Student Portal</h2>
+                <p>
+                    Access your personal student finance information
+                    and manage your fee payments.
+                </p>
+            </div>
+
+            <div class="service-grid">
+
+                <div class="service-card">
+                    <div class="service-icon">01</div>
+                    <h3>Student Registration</h3>
+                    <p>
+                        Create your student portal account using
+                        your existing university student details.
+                    </p>
+                    <a href="{% url 'student_register' %}">
+                        Register Account
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">02</div>
+                    <h3>Student Login</h3>
+                    <p>
+                        Securely access your personal fee information
+                        using your admission number and password.
+                    </p>
+                    <a href="{% url 'student_login' %}">
+                        Login to Portal
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">03</div>
+                    <h3>Fee Statements</h3>
+                    <p>
+                        View your assigned fees, total payments
+                        and outstanding fee balance.
+                    </p>
+                    <a href="{% url 'student_login' %}">
+                        View My Fees
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">04</div>
+                    <h3>M-Pesa Payments</h3>
+                    <p>
+                        Pay your outstanding university fees
+                        using M-Pesa STK Push.
+                    </p>
+                    <a href="{% url 'student_login' %}">
+                        Make Payment
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">05</div>
+                    <h3>Payment Receipts</h3>
+                    <p>
+                        View and print receipts for successfully
+                        completed fee payments.
+                    </p>
+                    <a href="{% url 'student_login' %}">
+                        Access Receipts
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ADMIN PORTAL -->
+
+        <section class="quick-access" id="admin-portal">
+
+            <div class="section-heading">
+                <h2>Administrator Portal</h2>
+                <p>
+                    Administrative access for authorized university
+                    finance personnel.
+                </p>
+            </div>
+
+            <div class="access-card">
+                <div>
+                    <h3>Fee Administration</h3>
+                    <p>
+                        Manage student records, assign fees,
+                        record payments and monitor transactions.
+                    </p>
+                </div>
+
+                <a href="{% url 'assign_fee' %}" class="primary-btn">
+    Assign Fees
+</a>
+            </div>
+
+            <div class="access-card">
+                <div>
+                    <h3>Fee Management Dashboard</h3>
+                    <p>
+                        Access student records, fee records,
+                        payment history and financial information.
+                    </p>
+                </div>
+
+                <a href="/admin/" class="primary-btn">
+                    Access Administration
+                </a>
+            </div>
+
+        </section>
+
+        <!-- STATISTICS -->
+
+        <section class="statistics-section">
+
+            <div class="section-heading">
+                <h2>Portal Overview</h2>
+                <p>
+                    A summary of the current fee management records.
+                </p>
+            </div>
+
+            <div class="statistics-grid">
+
+                <div class="stat-card">
+                    <h3>{{ total_students }}</h3>
+                    <p>Registered Students</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>{{ total_fees }}</h3>
+                    <p>Fee Records</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>{{ total_payments }}</h3>
+                    <p>Completed Payments</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ABOUT -->
+
+        <section class="about-section" id="about">
+
+            <div class="about-content">
+
+                <h2>About UOK Fee Portal</h2>
+
+                <p>
+                    UOK Fee Portal is a School Fees Management System
+                    developed for the University of Kabianga.
+                </p>
+
+                <p>
+                    The system provides a centralized platform for
+                    student registration, fee management, payment
+                    processing and monitoring of outstanding balances.
+                </p>
+
+                <p>
+                    Students can access their fee information,
+                    make M-Pesa payments and obtain payment receipts,
+                    while authorized administrators manage financial records.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="footer" id="contact">
+
+        <div class="footer-content">
+            <h3>UOK Fee Portal</h3>
+            <p>University of Kabianga</p>
+            <p>School Fees Management System</p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                &copy; 2026 UOK Fee Portal. All Rights Reserved.
+            </p>
+        </div>
+
+    </footer>
+
+</body>
+</html>

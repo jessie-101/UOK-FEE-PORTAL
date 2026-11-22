@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Student | UOK Fee Portal</title>
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">UOK</div>
+            <div>
+                <h1>UOK Fee Portal</h1>
+                <p>University of Kabianga</p>
+            </div>
+        </div>
+        <a href="{% url 'home' %}" class="login-btn">Home</a>
+    </div>
+</header>
+
+<section class="registration-section">
+    <div class="registration-card">
+        <h2>Student Registration</h2>
+        <p>Enter the student's details below.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <small class="error-message">{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="primary-btn">
+                Register Student
+            </button>
+        </form>
+
+        <p class="form-footer">
+            <a href="{% url 'student_list' %}">View Registered Students</a>
+        </p>
+    </div>
+</section>
+
+</body>
+</html>

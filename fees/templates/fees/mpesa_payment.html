@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Pesa Payment | UOK Fee Portal</title>
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">UOK</div>
+            <div>
+                <h1>UOK Fee Portal</h1>
+                <p>University of Kabianga</p>
+            </div>
+        </div>
+
+        <a href="{% url 'home' %}" class="login-btn">Home</a>
+    </div>
+</header>
+
+<main class="mpesa-container">
+
+    <div class="mpesa-card">
+
+        <div class="mpesa-heading">
+            <h2>M-Pesa Fee Payment</h2>
+            <p>Pay your outstanding university fees securely using M-Pesa.</p>
+        </div>
+
+        {% if message %}
+            <div class="success-message">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        {% if payment %}
+            <div class="payment-details">
+                <h3>Payment Details</h3>
+                <p><strong>Payment ID:</strong> {{ payment.id }}</p>
+                <p><strong>Amount:</strong> KSh {{ payment.amount }}</p>
+                <p><strong>Status:</strong> {{ payment.status }}</p>
+                <p class="payment-instruction">
+                    Check your phone for the M-Pesa payment prompt.
+                </p>
+            </div>
+        {% endif %}
+
+        {% if form %}
+            <form method="POST">
+                {% csrf_token %}
+
+                {{ form.non_field_errors }}
+
+                <div class="form-group">
+                    <label>Select Fee</label>
+                    {{ form.fee }}
+                    {{ form.fee.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Amount to Pay (KSh)</label>
+                    {{ form.amount }}
+                    {{ form.amount.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>M-Pesa Phone Number</label>
+                    {{ form.phone_number }}
+                    {{ form.phone_number.errors }}
+                </div>
+
+                <button type="submit" class="btn">
+                    Pay with M-Pesa
+                </button>
+            </form>
+        {% endif %}
+
+        <div class="mpesa-footer">
+            <a href="{% url 'home' %}">Back to Home</a>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

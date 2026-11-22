@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Payment | UOK Fee Portal</title>
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">UOK</div>
+            <div>
+                <h1>UOK Fee Portal</h1>
+                <p>University of Kabianga</p>
+            </div>
+        </div>
+
+        <a href="{% url 'home' %}" class="login-btn">Home</a>
+    </div>
+</header>
+
+<section class="registration-section">
+    <div class="payment-form-card">
+
+        <h2>Record Student Payment</h2>
+        <p>Enter the payment details below.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="primary-btn">
+                Record Payment
+            </button>
+        </form>
+
+        <div class="form-footer">
+            <a href="{% url 'payment_list' %}">View Payment History</a>
+            <br><br>
+            <a href="{% url 'home' %}">Back to Home</a>
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

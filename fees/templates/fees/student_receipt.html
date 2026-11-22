@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Payment Receipt | UOK Fee Portal</title>
+    <link rel="stylesheet" href="{% static 'fees/css/style.css' %}">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">UOK</div>
+            <div>
+                <h1>UOK Fee Portal</h1>
+                <p>University of Kabianga</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="receipt-container">
+
+    <div class="receipt-card">
+
+        <div class="receipt-heading">
+            <h2>UNIVERSITY OF KABIANGA</h2>
+            <h3>OFFICIAL PAYMENT RECEIPT</h3>
+            <p>UOK Fee Portal</p>
+        </div>
+
+        <div class="receipt-status">
+            {{ payment.status }}
+        </div>
+
+        <div class="receipt-section">
+            <h3>Student Information</h3>
+
+            <div class="receipt-row">
+                <span>Student Name</span>
+                <strong>{{ student.first_name }} {{ student.last_name }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Admission Number</span>
+                <strong>{{ student.admission_number }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Course</span>
+                <strong>{{ student.course }}</strong>
+            </div>
+        </div>
+
+        <div class="receipt-section">
+            <h3>Payment Information</h3>
+
+            <div class="receipt-row">
+                <span>Payment ID</span>
+                <strong>{{ payment.id }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Academic Year</span>
+                <strong>{{ payment.fee.academic_year }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Semester</span>
+                <strong>{{ payment.fee.semester }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Payment Method</span>
+                <strong>{{ payment.payment_method }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Transaction Reference</span>
+                <strong>{{ payment.transaction_reference|default:"—" }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>Payment Date</span>
+                <strong>{{ payment.payment_date|date:"d M Y, H:i" }}</strong>
+            </div>
+        </div>
+
+        <div class="receipt-amount">
+            <p>AMOUNT PAID</p>
+            <h2>KSh {{ payment.amount|floatformat:2 }}</h2>
+        </div>
+
+        <div class="receipt-thankyou">
+            <p>Thank you for your payment.</p>
+            <small>This receipt confirms the payment recorded in the UOK Fee Portal.</small>
+        </div>
+
+        <div class="receipt-actions">
+            <button onclick="window.print()" class="primary-btn">
+                Print Receipt
+            </button>
+
+            <a href="{% url 'student_dashboard' %}" class="receipt-back">
+                Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
