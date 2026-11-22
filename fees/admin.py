@@ -1,5 +1,24 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
+
 from .models import Student, Fee, Payment
+
+User = get_user_model()
+
+
+# Allow administrators to edit user details
+# without changing existing usernames.
+admin.site.unregister(User)
+
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    readonly_fields = (
+        'username',
+        'last_login',
+        'date_joined'
+    )
 
 
 @admin.register(Student)
