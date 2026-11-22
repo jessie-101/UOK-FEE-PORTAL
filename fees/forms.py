@@ -15,7 +15,6 @@ class StudentForm(forms.ModelForm):
             'guardian_phone'
         ]
 
-
 class StudentRegistrationForm(forms.Form):
     admission_number = forms.CharField(max_length=30)
     first_name = forms.CharField(max_length=100)
@@ -35,18 +34,17 @@ class StudentRegistrationForm(forms.Form):
     def clean_admission_number(self):
         admission_number = self.cleaned_data['admission_number'].strip()
 
-        student = Student.objects.filter(
-            admission_number=admission_number
-        ).first()
-
-        if not student:
+        if Student.objects.filter(admission_number=admission_number).exists():
             raise forms.ValidationError(
-                "Admission number not found. Contact the university fees office."
+                "This admission number is already registered. Please log in or contact the fees office."
             )
 
-        if student.user is not None:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        if User.objects.filter(username=admission_number).exists():
             raise forms.ValidationError(
-                "This student already has a portal account. Please log in."
+                "An account with this admission number already exists. Please log in."
             )
 
         return admission_number
@@ -63,32 +61,7 @@ class StudentRegistrationForm(forms.Form):
                 "Passwords do not match."
             )
 
-        admission_number = cleaned_data.get('admission_number')
-
-        if admission_number:
-            student = Student.objects.filter(
-                admission_number=admission_number
-            ).first()
-
-            if student:
-                fields_to_check = [
-                    ('first_name', student.first_name),
-                    ('last_name', student.last_name),
-                    ('course', student.course),
-                    ('guardian_phone', student.guardian_phone),
-                ]
-
-                for field, existing_value in fields_to_check:
-                    submitted_value = cleaned_data.get(field)
-
-                    if submitted_value and submitted_value.strip().casefold() != existing_value.strip().casefold():
-                        self.add_error(
-                            field,
-                            "This information does not match the university student record."
-                        )
-
         return cleaned_data
-
 
 class FeeForm(forms.ModelForm):
     class Meta:

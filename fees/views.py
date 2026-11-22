@@ -169,20 +169,51 @@ def student_dashboard(request):
 
 # ADMIN: REGISTER STUDENT
 @staff_member_required
-def register_student(request):
+def student_register(request):
     if request.method == 'POST':
-        form = StudentForm(request.POST)
+        form = StudentRegistrationForm(request.POST)
 
         if form.is_valid():
-            form.save()
-            return redirect('student_list')
+            User = get_user_model()
+
+            try:
+                with transaction.atomic():
+                    admission_number = form.cleaned_data['admission_number']
+
+                    user = User.objects.create_user(
+                        username=admission_number,
+                        password=form.cleaned_data['password'],
+                        first_name=form.cleaned_data['first_name'],
+                        last_name=form.cleaned_data['last_name']
+                    )
+
+                    Student.objects.create(
+                        admission_number=admission_number,
+                        user=user,
+                        first_name=form.cleaned_data['first_name'],
+                        last_name=form.cleaned_data['last_name'],
+                        course=form.cleaned_data['course'],
+                        guardian_phone=form.cleaned_data['guardian_phone']
+                    )
+
+                messages.success(
+                    request,
+                    'Registration successful. You can now log in.'
+                )
+                return redirect('student_login')
+
+            except Exception:
+                form.add_error(
+                    None,
+                    'Registration failed. Please check your details and try again.'
+                )
 
     else:
-        form = StudentForm()
+        form = StudentRegistrationForm()
 
     return render(
         request,
-        'fees/register_student.html',
+        'fees/student_register.html',
         {'form': form}
     )
 
