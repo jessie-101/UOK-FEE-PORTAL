@@ -1,7 +1,12 @@
+
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
 from .models import Student, Fee, Payment
+
+
+User = get_user_model()
 
 
 class StudentForm(forms.ModelForm):
@@ -15,12 +20,20 @@ class StudentForm(forms.ModelForm):
             'guardian_phone'
         ]
 
+
 class StudentRegistrationForm(forms.Form):
     admission_number = forms.CharField(max_length=30)
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
     course = forms.CharField(max_length=150)
     guardian_phone = forms.CharField(max_length=20)
+
+    email = forms.EmailField(
+        label="Email Address",
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Enter your email address'
+        })
+    )
 
     password = forms.CharField(
         widget=forms.PasswordInput(),
@@ -39,15 +52,22 @@ class StudentRegistrationForm(forms.Form):
                 "This admission number is already registered. Please log in or contact the fees office."
             )
 
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-
         if User.objects.filter(username=admission_number).exists():
             raise forms.ValidationError(
                 "An account with this admission number already exists. Please log in."
             )
 
         return admission_number
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip().lower()
+
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                "This email address is already registered. Please use another email."
+            )
+
+        return email
 
     def clean(self):
         cleaned_data = super().clean()
@@ -63,6 +83,7 @@ class StudentRegistrationForm(forms.Form):
 
         return cleaned_data
 
+
 class FeeForm(forms.ModelForm):
     class Meta:
         model = Fee
@@ -72,6 +93,7 @@ class FeeForm(forms.ModelForm):
             'semester',
             'amount_due'
         ]
+
         widgets = {
             'academic_year': forms.TextInput(attrs={
                 'placeholder': 'e.g. 2026/2027'
@@ -93,6 +115,7 @@ class PaymentForm(forms.ModelForm):
             'payment_method',
             'transaction_reference'
         ]
+
         widgets = {
             'amount': forms.NumberInput(attrs={
                 'placeholder': 'Enter payment amount',
@@ -149,6 +172,7 @@ class MpesaPaymentForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
         fee = cleaned_data.get('fee')
         amount = cleaned_data.get('amount')
 

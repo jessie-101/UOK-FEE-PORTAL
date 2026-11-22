@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from fees import views
+from django.contrib.auth import views as auth_views
 # UOK Fee Portal Admin Branding
 admin.site.site_header = "UOK Fee Portal"
 admin.site.site_title = "UOK Fee Portal | Administration"
@@ -55,5 +56,39 @@ path(
     views.student_payment_receipt,
     name='student_payment_receipt'
 ),
+    path(
+        'student/password-reset/',
+        auth_views.PasswordResetView.as_view(
+            template_name='registration/password_reset_form.html',
+            email_template_name='registration/password_reset_email.html',
+            subject_template_name='registration/password_reset_subject.txt',
+            success_url='/student/password-reset/done/'
+        ),
+        name='password_reset'
+    ),
+
+    path(
+        'student/password-reset/done/',
+        auth_views.PasswordResetDoneView.as_view(
+            template_name='registration/password_reset_done.html'
+        ),
+        name='password_reset_done'
+    ),
+
+    path(
+        'student/reset/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name='registration/password_reset_confirm.html'
+        ),
+        name='password_reset_confirm'
+    ),
+
+    path(
+        'student/reset/complete/',
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name='registration/password_reset_complete.html'
+        ),
+        name='password_reset_complete'
+    ),
 ]
 

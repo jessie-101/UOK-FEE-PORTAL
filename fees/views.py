@@ -55,6 +55,7 @@ def student_register(request):
 
             admission_number = form.cleaned_data['admission_number']
             password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
 
             try:
                 with transaction.atomic():
@@ -62,6 +63,7 @@ def student_register(request):
                     user = User.objects.create_user(
                         username=admission_number,
                         password=password,
+                        email=email,
                         first_name=form.cleaned_data['first_name'],
                         last_name=form.cleaned_data['last_name']
                     )
@@ -96,7 +98,6 @@ def student_register(request):
         'fees/student_register.html',
         {'form': form}
     )
-
 
 # STUDENT LOGIN
 def student_login(request):
