@@ -5,7 +5,7 @@ Django settings for school_fees_system project.
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
+import dj_database_url
 load_dotenv()
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,7 +14,7 @@ load_dotenv(BASE_DIR / '.env')
 # Security settings
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -22,9 +22,17 @@ ALLOWED_HOSTS = [
     'relatable-savor-stable.ngrok-free.dev',
 ]
 
+RENDER_HOST = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+
+if RENDER_HOST:
+    ALLOWED_HOSTS.append(RENDER_HOST)
+
 CSRF_TRUSTED_ORIGINS = [
     'https://relatable-savor-stable.ngrok-free.dev',
 ]
+
+if RENDER_HOST:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
 
 # Application definition
 INSTALLED_APPS = [
@@ -46,6 +54,7 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,12 +88,21 @@ WSGI_APPLICATION = 'school_fees_system.wsgi.application'
 
 
 # Database configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -118,6 +136,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
