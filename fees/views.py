@@ -1,4 +1,5 @@
 import json
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models, transaction
 from django.http import JsonResponse
@@ -291,10 +292,7 @@ def initiate_mpesa_payment(request):
                 status='Pending'
             )
 
-            callback_url = (
-                "https://relatable-savor-stable.ngrok-free.dev"
-                "/mpesa/callback/"
-            )
+            callback_url = os.getenv('MPESA_CALLBACK_URL')
 
             print("MPESA CALLBACK URL:", callback_url)
 
@@ -403,10 +401,7 @@ def student_mpesa_payment(request):
                 status='Pending'
             )
 
-            callback_url = (
-                "https://relatable-savor-stable.ngrok-free.dev"
-                "/mpesa/callback/"
-            )
+            callback_url = os.getenv('MPESA_CALLBACK_URL')
 
             try:
                 response = stk_push(

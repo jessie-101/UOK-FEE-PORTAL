@@ -19,7 +19,6 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'relatable-savor-stable.ngrok-free.dev',
 ]
 
 RENDER_HOST = os.getenv('RENDER_EXTERNAL_HOSTNAME')
@@ -27,9 +26,10 @@ RENDER_HOST = os.getenv('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_HOST:
     ALLOWED_HOSTS.append(RENDER_HOST)
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://relatable-savor-stable.ngrok-free.dev',
-]
+CSRF_TRUSTED_ORIGINS = []
+
+if RENDER_HOST:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
 
 if RENDER_HOST:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
