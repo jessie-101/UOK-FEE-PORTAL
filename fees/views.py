@@ -1,5 +1,6 @@
 import json
 import os
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models, transaction
 from django.http import JsonResponse
@@ -57,20 +58,22 @@ def student_register(request):
 
             try:
                 with transaction.atomic():
-                    student = Student.objects.select_for_update().get(
-                        admission_number=admission_number,
-                        user__isnull=True
-                    )
 
                     user = User.objects.create_user(
                         username=admission_number,
                         password=password,
-                        first_name=student.first_name,
-                        last_name=student.last_name
+                        first_name=form.cleaned_data['first_name'],
+                        last_name=form.cleaned_data['last_name']
                     )
 
-                    student.user = user
-                    student.save(update_fields=['user'])
+                    Student.objects.create(
+                        admission_number=admission_number,
+                        user=user,
+                        first_name=form.cleaned_data['first_name'],
+                        last_name=form.cleaned_data['last_name'],
+                        course=form.cleaned_data['course'],
+                        guardian_phone=form.cleaned_data['guardian_phone']
+                    )
 
                 messages.success(
                     request,
@@ -82,15 +85,17 @@ def student_register(request):
             except Exception:
                 form.add_error(
                     None,
-                    'Registration failed. Please check your details or contact the fees office.'
+                    'Registration failed. Please check your details and try again.'
                 )
 
     else:
         form = StudentRegistrationForm()
 
-    return render(request, 'fees/student_register.html', {
-        'form': form
-    })
+    return render(
+        request,
+        'fees/student_register.html',
+        {'form': form}
+    )
 
 
 # STUDENT LOGIN
@@ -169,51 +174,26 @@ def student_dashboard(request):
 
 # ADMIN: REGISTER STUDENT
 @staff_member_required
-def student_register(request):
+def register_student(request):
     if request.method == 'POST':
-        form = StudentRegistrationForm(request.POST)
+        form = StudentForm(request.POST)
 
         if form.is_valid():
-            User = get_user_model()
+            form.save()
 
-            try:
-                with transaction.atomic():
-                    admission_number = form.cleaned_data['admission_number']
+            messages.success(
+                request,
+                'Student record added successfully.'
+            )
 
-                    user = User.objects.create_user(
-                        username=admission_number,
-                        password=form.cleaned_data['password'],
-                        first_name=form.cleaned_data['first_name'],
-                        last_name=form.cleaned_data['last_name']
-                    )
-
-                    Student.objects.create(
-                        admission_number=admission_number,
-                        user=user,
-                        first_name=form.cleaned_data['first_name'],
-                        last_name=form.cleaned_data['last_name'],
-                        course=form.cleaned_data['course'],
-                        guardian_phone=form.cleaned_data['guardian_phone']
-                    )
-
-                messages.success(
-                    request,
-                    'Registration successful. You can now log in.'
-                )
-                return redirect('student_login')
-
-            except Exception:
-                form.add_error(
-                    None,
-                    'Registration failed. Please check your details and try again.'
-                )
+            return redirect('student_list')
 
     else:
-        form = StudentRegistrationForm()
+        form = StudentForm()
 
     return render(
         request,
-        'fees/student_register.html',
+        'fees/register_student.html',
         {'form': form}
     )
 
@@ -409,6 +389,7 @@ def payment_list(request):
 def student_mpesa_payment(request):
     try:
         student = request.user.student_profile
+
     except Student.DoesNotExist:
         messages.error(request, 'Student profile not found.')
         return redirect('student_login')
@@ -494,6 +475,7 @@ def student_mpesa_payment(request):
 def student_payment_receipt(request, payment_id):
     try:
         student = request.user.student_profile
+
     except Student.DoesNotExist:
         messages.error(request, 'Student profile not found.')
         return redirect('student_login')
