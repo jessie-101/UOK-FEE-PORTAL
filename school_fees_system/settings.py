@@ -1,3 +1,4 @@
+
 """
 Django settings for school_fees_system project.
 """
@@ -6,7 +7,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import dj_database_url
+
 load_dotenv()
+
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
@@ -31,9 +34,6 @@ CSRF_TRUSTED_ORIGINS = []
 if RENDER_HOST:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
 
-if RENDER_HOST:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -46,10 +46,12 @@ INSTALLED_APPS = [
     # Django REST Framework
     'rest_framework',
 
+    # Email integration
+    'anymail',
+
     # Local applications
     'fees',
 ]
-
 
 # Middleware
 MIDDLEWARE = [
@@ -63,9 +65,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'school_fees_system.urls'
-
 
 # Templates
 TEMPLATES = [
@@ -83,9 +83,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'school_fees_system.wsgi.application'
-
 
 # Database configuration
 if os.getenv('DATABASE_URL'):
@@ -104,7 +102,6 @@ else:
         }
     }
 
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -121,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 
@@ -130,7 +126,6 @@ TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files
 STATIC_URL = 'static/'
@@ -147,28 +142,32 @@ STORAGES = {
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# M-Pesa configuration
 MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY')
 MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET')
 MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
 MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
 
 MPESA_BASE_URL = 'https://sandbox.safaricom.co.ke'
+
+# Login configuration
 LOGIN_URL = '/student/login/'
-# Email Configuration
-EMAIL_BACKEND = os.getenv(
-    'EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend'
+
+# Resend email configuration
+RESEND_API_KEY = os.getenv('RESEND_API_KEY')
+
+ANYMAIL = {
+    'RESEND_API_KEY': RESEND_API_KEY,
+}
+
+EMAIL_BACKEND = (
+    'anymail.backends.resend.EmailBackend'
+    if RESEND_API_KEY
+    else 'django.core.mail.backends.console.EmailBackend'
 )
-
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 
 DEFAULT_FROM_EMAIL = os.getenv(
     'DEFAULT_FROM_EMAIL',
-    EMAIL_HOST_USER
+    'onboarding@resend.dev'
 )
